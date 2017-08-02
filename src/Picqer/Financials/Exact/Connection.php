@@ -261,12 +261,16 @@ class Connection
      * @param $url
      * @param $filename
      */
-    public function download($url, $filename)
+    public function download($url, $filename = false)
     {
         try {
-            $request = $this->createRequest('GET', $url);
-            $response = $this->client()->send($request);
-            file_put_contents($filename, $response->getBody()->getContents());
+            $request    = $this->createRequest('GET', $url);
+            $response   = $this->client()->send($request);
+            $file       = $response->getBody()->getContents();
+
+            if (!$filename) return $file;
+
+            if ($filename) return file_put_contents($filename, $file);
         } catch (Exception $e) {
             throw new ApiException($e->getMessage());
         }
